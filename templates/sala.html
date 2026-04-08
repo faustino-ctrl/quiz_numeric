@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sala {{ codigo }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+</head>
+<body data-nome='{{ nome|tojson }}' data-codigo='{{ codigo|tojson }}' data-token='{{ token|tojson }}'>
+    <div class="tela pixel-bg">
+        <div class="decor decor-1"></div>
+        <div class="decor decor-2"></div>
+
+        <main class="painel painel-sala">
+            <div class="topo-sala">
+                <div>
+                    <p class="texto-topo">SALA {{ codigo }}</p>
+                    <h1 class="titulo-principal titulo-sala">{{ nome }}</h1>
+                </div>
+
+                <div class="meta-sala">
+                    <p><span>Você:</span> <strong>{{ nome }}</strong></p>
+                    <p><span>Criadora:</span> <strong id="criador-sala">{{ sala.jogadores[sala.criador_token].nome }}</strong></p>
+                </div>
+            </div>
+
+            <p id="mensagem-erro" class="mensagem erro" style="display:none;"></p>
+
+            <!-- TELA DE ESPERA -->
+            <section id="tela-espera">
+                <div class="grade-sala grade-espera">
+                    <div class="bloco bloco-pixel">
+                        <h2>Jogadoras na sala</h2>
+                        <ul id="lista-jogadoras">
+                            {% for token_jogadora, dados in sala.jogadores.items() %}
+                                <li>{{ dados.nome }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <div class="bloco bloco-pixel">
+                        <h2>Movimentação da sala</h2>
+                        <div class="chat-sala" id="chat-sala">
+                            {% for mensagem in sala.mensagens %}
+                                <p>{{ mensagem }}</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TELA DO JOGO -->
+            <section id="tela-jogo" style="display:none;">
+                <div class="grade-sala">
+                    <div class="bloco bloco-pixel">
+                        <h2 id="titulo-rodada">Rodada</h2>
+                        <p class="pergunta" id="texto-pergunta"></p>
+                        <p class="subinfo" id="texto-turno"></p>
+
+                        <div class="form-resposta-box">
+                            <input type="number" id="campo-resposta" placeholder="Digite um número">
+                            <button id="botao-responder" type="button" class="botao-pixel">Responder</button>
+                        </div>
+                    </div>
+
+                    <div class="bloco bloco-pixel">
+                        <h2>Pontuação da partida</h2>
+                        <ul id="lista-pontuacao"></ul>
+                    </div>
+
+                    <div class="bloco bloco-pixel">
+                        <h2>Respostas da rodada</h2>
+                        <div class="chat-sala" id="historico-respostas"></div>
+                    </div>
+
+                    <div class="bloco bloco-pixel">
+                        <h2>Movimentação da partida</h2>
+                        <div class="chat-sala" id="chat-jogo"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RANKING FINAL -->
+            <div class="bloco bloco-pixel ranking-box" id="ranking-final" style="display:none;">
+                <h2>Ranking final</h2>
+                <ol id="lista-ranking"></ol>
+                <button type="button" id="botao-voltar-espera" class="botao-pixel">Voltar para sala de espera</button>
+            </div>
+
+            <div class="acoes-sala">
+                <button type="button" id="botao-iniciar" class="botao-pixel" style="display:none;">Iniciar partida</button>
+                <button type="button" id="botao-sair" class="botao-pixel botao-sair">Sair da sala</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const socket = io();
+
+        const jogadorNome = JSON.parse(document.body.dataset.nome);
+        const salaCodigo = JSON.parse(document.body.dataset.codigo);
+        const jogadorToken = JSON.parse(document.body.dataset.token);
+
+        const listaJogadoras = document.getElementById("lista-jogadoras");
+        const listaPontuacao = document.getElementById("lista-pontuacao");
+        const criadorSala = document.getElementById("criador-sala");
+        const chatSala = document.getElementById("chat-sala");
+        const chatJogo = document.getElementById("chat-jogo");
+        const historicoRespostas = document.getElementById("historico-respostas");
+        const telaEspera = document.getElementById("tela-espera");
+        const telaJogo = document.getElementById("tela-jogo");
+        const tituloRodada = document.getElementById("titulo-rodada");
+        const textoPergunta = document.getElementById("texto-pergunta");
+        const textoTurno = document.getElementById("texto-turno");
+        const campoResposta = document.getElementById("campo-resposta");
+        const botaoResponder = document.getElementById("botao-responder");
+        const botaoIniciar = document.getElementById("botao-iniciar");
+        const botaoSair = document.getElementById("botao-sair");
+        const mensagemErro = document.getElementById("mensagem-erro");
+        const rankingFinal = document.getElementById("ranking-final");
+        const listaRanking = document.getElementById("lista-ranking");
+        const botaoVoltarEspera = document.getElementById("botao-voltar-espera");
+
+        function mostrarErro(texto) {
+            mensagemErro.textContent = texto;
+            mensagemErro.style.display = "block";
+
+            setTimeout(function() {
+                mensagemErro.style.display = "none";
+            }, 2500);
+        }
+
+        function ordenarPorChegada(jogadores) {
+            return jogadores.slice().sort(function(a, b) {
+                return a.ordem_chegada - b.ordem_chegada;
+            });
+        }
+
+        function atualizarListaJogadoras(jogadores) {
+            listaJogadoras.innerHTML = "";
+
+            const lista = ordenarPorChegada(jogadores);
+
+            for (let i = 0; i < lista.length; i++) {
+                const li = document.createElement("li");
+                li.textContent = lista[i].nome;
+                listaJogadoras.appendChild(li);
+            }
+        }
+
+        function atualizarPontuacao(jogadores) {
+            listaPontuacao.innerHTML = "";
+
+            const lista = jogadores.slice().sort(function(a, b) {
+                return b.pontos - a.pontos;
+            });
+
+            for (let i = 0; i < lista.length; i++) {
+                const li = document.createElement("li");
+                li.textContent = lista[i].nome + " - " + lista[i].pontos + " pts";
+                listaPontuacao.appendChild(li);
+            }
+        }
+
+        function atualizarMensagens(container, mensagens) {
+            container.innerHTML = "";
+
+            for (let i = 0; i < mensagens.length; i++) {
+                const p = document.createElement("p");
+                p.textContent = mensagens[i];
+                container.appendChild(p);
+            }
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function atualizarHistoricoRespostas(respostas) {
+            historicoRespostas.innerHTML = "";
+
+            for (let i = 0; i < respostas.length; i++) {
+                const p = document.createElement("p");
+                p.textContent = respostas[i].nome + " respondeu " + respostas[i].resposta + " e ganhou " + respostas[i].pontos_recebidos + " pts";
+                historicoRespostas.appendChild(p);
+            }
+
+            historicoRespostas.scrollTop = historicoRespostas.scrollHeight;
+        }
+
+        function atualizarRanking(ranking) {
+            listaRanking.innerHTML = "";
+
+            for (let i = 0; i < ranking.length; i++) {
+                const li = document.createElement("li");
+                li.textContent = ranking[i].nome + " - " + ranking[i].pontos + " pts";
+                listaRanking.appendChild(li);
+            }
+        }
+
+        function atualizarTela(dados) {
+            criadorSala.textContent = dados.criador_nome;
+            atualizarListaJogadoras(dados.jogadores);
+
+            const souCriadora = jogadorToken === dados.criador_token;
+
+            if (!dados.em_jogo) {
+                telaEspera.style.display = "block";
+                telaJogo.style.display = "none";
+
+                campoResposta.value = "";
+                campoResposta.disabled = true;
+                botaoResponder.disabled = true;
+
+                atualizarMensagens(chatSala, dados.mensagens);
+
+                historicoRespostas.innerHTML = "";
+                listaPontuacao.innerHTML = "";
+                chatJogo.innerHTML = "";
+
+                if (dados.mostrar_ranking_final) {
+                    rankingFinal.style.display = "block";
+                    atualizarRanking(dados.ranking);
+                    botaoIniciar.style.display = "none";
+                } else {
+                    rankingFinal.style.display = "none";
+
+                    if (souCriadora && dados.jogadores.length >= 2) {
+                        botaoIniciar.style.display = "inline-block";
+                    } else {
+                        botaoIniciar.style.display = "none";
+                    }
+                }
+            } else {
+                telaEspera.style.display = "none";
+                telaJogo.style.display = "block";
+                rankingFinal.style.display = "none";
+                botaoIniciar.style.display = "none";
+
+                tituloRodada.textContent = "Rodada " + dados.rodada_atual + (dados.fase === "desempate" ? " - Desempate" : "");
+                textoPergunta.textContent = dados.pergunta_atual;
+                textoTurno.textContent = "Vez de: " + dados.turno_nome;
+
+                atualizarPontuacao(dados.jogadores);
+                atualizarHistoricoRespostas(dados.historico_respostas);
+                atualizarMensagens(chatJogo, dados.mensagens);
+
+                const minhaVez = jogadorToken === dados.turno_token;
+                campoResposta.disabled = !minhaVez;
+                botaoResponder.disabled = !minhaVez;
+
+                if (minhaVez) {
+                    campoResposta.focus();
+                }
+            }
+        }
+
+        socket.on("connect", function() {
+            socket.emit("entrar_socket_sala", {
+                codigo: salaCodigo,
+                token: jogadorToken
+            });
+        });
+
+        socket.on("estado_sala", function(dados) {
+            atualizarTela(dados);
+        });
+
+        socket.on("erro_jogo", function(dados) {
+            mostrarErro(dados.mensagem);
+        });
+
+        botaoIniciar.addEventListener("click", function() {
+            socket.emit("iniciar_partida", {
+                codigo: salaCodigo,
+                token: jogadorToken
+            });
+        });
+
+        botaoResponder.addEventListener("click", function() {
+            socket.emit("enviar_resposta", {
+                codigo: salaCodigo,
+                token: jogadorToken,
+                resposta: campoResposta.value
+            });
+
+            campoResposta.value = "";
+        });
+
+        campoResposta.addEventListener("keydown", function(evento) {
+            if (evento.key === "Enter" && !botaoResponder.disabled) {
+                botaoResponder.click();
+            }
+        });
+
+        botaoVoltarEspera.addEventListener("click", function() {
+            socket.emit("voltar_para_espera", {
+                codigo: salaCodigo
+            });
+        });
+
+        botaoSair.addEventListener("click", function() {
+            socket.emit("sair_da_sala", {
+                codigo: salaCodigo,
+                token: jogadorToken
+            });
+
+            setTimeout(function() {
+                window.location.href = "/";
+            }, 200);
+        });
+    </script>
+</body>
+</html>

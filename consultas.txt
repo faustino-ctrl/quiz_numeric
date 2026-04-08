@@ -1,0 +1,30 @@
+CREATE DATABASE quiz_guias CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE quiz_guias;
+
+CREATE TABLE perguntas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    pergunta VARCHAR(255) NOT NULL,
+    resposta_correta INT NOT NULL
+);
+
+INSERT INTO perguntas (pergunta, resposta_correta) VALUES
+('Quantos estados tem o Brasil?', 26),
+('Quantos planetas existem no Sistema Solar?', 8),
+('Quantos jogadores titulares tem um time de futebol?', 11),
+('Quantos segundos tem 1 minuto?', 60),
+('Quantos dias tem um ano comum?', 365),
+('Quantos lados tem um hexágono?', 6),
+('Quantas letras tem o alfabeto português?', 26),
+('Quantos meses tem um ano?', 12),
+('Quantos continentes existem no modelo mais usado no Brasil?', 6),
+('Quantos metros tem um quilômetro?', 1000),
+('Quantos dentes tem um adulto normalmente?', 32),
+('Quantas horas tem um dia?', 24),
+('Quantos minutos tem uma hora?', 60),
+('Quantos jogadores entram em quadra por time no vôlei?', 6),
+('Quantos lados tem um quadrado?', 4),
+('Quantos anos tem uma década?', 10),
+('Quantos dias tem fevereiro em ano bissexto?', 29),
+('Quantos zeros tem mil?', 3),
+('Quantos centímetros tem um metro?', 100),
+('Quantos anos tem um século?', 100);

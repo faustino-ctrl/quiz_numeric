@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobby</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="tela pixel-bg">
+        <div class="decor decor-1"></div>
+        <div class="decor decor-3"></div>
+
+        <main class="painel painel-menor">
+            <p class="texto-topo">GUIA ATIVA</p>
+            <h1 class="titulo-principal">{{ nome }}</h1>
+            <p class="subtitulo-pixel">Escolha o próximo passo</p>
+
+            <div class="botoes-lobby">
+                <form action="/criar_sala" method="POST">
+                    <input type="hidden" name="nome" value="{{ nome }}">
+                    <button type="submit" class="botao-pixel">Criar sala</button>
+                </form>
+
+                <form action="/pagina_entrar_sala" method="POST">
+                    <input type="hidden" name="nome" value="{{ nome }}">
+                    <button type="submit" class="botao-pixel">Entrar em sala</button>
+                </form>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

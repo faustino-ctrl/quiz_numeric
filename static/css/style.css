@@ -1,0 +1,310 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: #1c0f4d;
+    color: #f8f3ff;
+    font-family: 'Press Start 2P', cursive;
+}
+
+.pixel-bg {
+    position: relative;
+    overflow: hidden;
+    background:
+        linear-gradient(180deg, #25105f 0%, #1c0f4d 100%);
+}
+
+.tela {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+}
+
+.decor-1 {
+    top: 56px;
+    left: 64px;
+}
+
+.decor-2 {
+    right: 120px;
+    top: 90px;
+}
+
+.decor-3 {
+    left: 110px;
+    bottom: 100px;
+}
+
+.painel {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    background: rgba(18, 10, 49, 0.92);
+    border: 4px solid #ffd447;
+    padding: 28px;
+}
+
+.painel-menor {
+    max-width: 760px;
+    text-align: center;
+}
+
+.painel-sala {
+    max-width: 1120px;
+}
+
+.texto-topo {
+    color: #ffd447;
+    font-size: 12px;
+    line-height: 1.7;
+    margin-bottom: 18px;
+}
+
+.titulo-principal {
+    font-size: clamp(22px, 3vw, 34px);
+    line-height: 1.5;
+    color: #ffd447;
+    text-shadow: 4px 4px 0 #ff2b97;
+    margin-bottom: 18px;
+}
+
+.titulo-sala {
+    margin-bottom: 0;
+}
+
+.subtitulo-pixel,
+.meta-sala p,
+.subinfo,
+.pergunta,
+.chat-sala p,
+ul li,
+ol li,
+input,
+button,
+label,
+.mensagem {
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    align-items: center;
+    margin-top: 18px;
+}
+
+input {
+    width: min(100%, 520px);
+    border: 4px solid #e5e1ef;
+    background: #f6f3ff;
+    color: #120a31;
+    padding: 16px 18px;
+    outline: none;
+    font-family: 'Press Start 2P', cursive;
+}
+
+input::placeholder {
+    color: #6e6292;
+}
+
+.botao-pixel {
+    border: 4px solid #ff2b97;
+    background: #ff2b97;
+    color: #ffd447;
+    padding: 14px 18px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', cursive;
+    transition: transform 0.08s ease;
+}
+
+.botao-pixel:hover {
+    transform: translate(-2px, -2px);
+}
+
+.botao-pixel:disabled {
+    background: #71658f;
+    border-color: #71658f;
+    color: #d4cae7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.botoes-lobby {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+    margin-top: 28px;
+}
+
+.botoes-lobby form,
+.botoes-lobby button,
+.acoes-sala button {
+    width: 100%;
+}
+
+.topo-sala {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.meta-sala {
+    text-align: right;
+}
+
+.meta-sala span {
+    color: #bfb5d8;
+}
+
+.grade-sala {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.bloco-pixel {
+    background: #241357;
+    border: 3px solid #6e57c8;
+    padding: 18px;
+}
+
+.bloco-pixel h2 {
+    color: #ffd447;
+    font-size: 14px;
+    margin-bottom: 14px;
+}
+
+.chat-sala {
+    min-height: 110px;
+    max-height: 220px;
+    overflow-y: auto;
+    border: 3px solid #4e3e88;
+    background: #1a103f;
+    padding: 12px;
+}
+
+ul,
+ol {
+    padding-left: 18px;
+}
+
+.pergunta {
+    color: #fff3b9;
+    margin-top: 8px;
+}
+
+.subinfo {
+    color: #ff8fcb;
+    margin-top: 12px;
+}
+
+.form-resposta-box {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 18px;
+}
+
+.form-resposta-box input {
+    flex: 1;
+    min-width: 220px;
+}
+
+.acoes-sala {
+    display: flex;
+    gap: 14px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.botao-sair {
+    background: #523f7f;
+    border-color: #523f7f;
+    color: #ffd447;
+}
+
+.ranking-box {
+    margin-top: 18px;
+}
+
+.mensagem {
+    margin-bottom: 18px;
+    padding: 12px;
+    border: 3px solid #ff7ab5;
+    background: rgba(255, 43, 151, 0.15);
+    color: #ffe6f2;
+}
+
+.erro {
+    border-color: #ff7ab5;
+}
+
+@media (max-width: 900px) {
+    .grade-sala {
+        grid-template-columns: 1fr;
+    }
+
+    .topo-sala {
+        flex-direction: column;
+    }
+
+    .meta-sala {
+        text-align: left;
+    }
+}
+
+@media (max-width: 900px) {
+    .grade-espera {
+        grid-template-columns: 1fr;
+    }
+
+    .painel {
+        padding: 18px;
+    }
+
+    .titulo-principal {
+        font-size: 20px;
+    }
+
+    .subtitulo-pixel,
+    .meta-sala p,
+    .subinfo,
+    .pergunta,
+    .chat-sala p,
+    ul li,
+    ol li,
+    input,
+    button,
+    label,
+    .mensagem,
+    .texto-topo {
+        font-size: 10px;
+    }
+}
+
+.grade-espera {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+#tela-espera,
+#tela-jogo {
+    width: 100%;
+}
+
+#lista-jogadoras,
+#lista-pontuacao,
+#lista-ranking {
+    min-height: 60px;
+}
