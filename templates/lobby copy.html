@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobby</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="tela">
+
+        <div class="card">
+
+            <p class="texto-topo">GUIA ATIVA</p>
+
+            <h1 class="titulo-secundario">{{ nome }}</h1>
+
+            <p class="subtitulo">Escolha o próximo passo</p>
+
+            <div class="grupo-botoes">
+
+                <!-- CRIAR SALA -->
+                <form action="{{ url_for('configurar_partida') }}" method="GET">
+                    <button type="submit" class="botao">
+                        Criar sala
+                    </button>
+                </form>
+
+                <!-- ENTRAR EM SALA -->
+                <form action="{{ url_for('pagina_entrar_sala') }}" method="GET">
+                    <button type="submit" class="botao">
+                        Entrar em sala
+                    </button>
+                </form>
+
+                <!-- LOGOUT -->
+                <a href="{{ url_for('logout') }}" class="botao-link">
+                    Sair da conta
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+</body>
+</html>

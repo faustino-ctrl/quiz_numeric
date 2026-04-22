@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="tela">
+        <div class="card">
+            <p class="texto-topo">CRIAR CONTA</p>
+            <h1 class="titulo-secundario">Cadastro</h1>
+
+            {% if erro %}
+                <p class="mensagem erro">{{ erro }}</p>
+            {% endif %}
+
+            <form action="{{ url_for('cadastrar') }}" method="POST" class="form-vertical">
+                <label>Nome de usuário</label>
+                <input type="text" name="username" class="input" maxlength="5" required>
+
+                <label>Email</label>
+                <input type="email" name="email" class="input" required>
+                <p class="texto-aviso">Atenção ao email informado. Ele será usado para recuperar sua conta caso você perca a senha.</p>
+
+                <label>Senha</label>
+                <input type="password" name="senha" class="input" required>
+
+                <button type="submit" class="botao">Cadastrar</button>
+            </form>
+
+            <p class="texto-link"><a href="{{ url_for('login') }}">Já tenho conta</a></p>
+        </div>
+    </div>
+</body>
+</html>

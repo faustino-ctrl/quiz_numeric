@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre o jogo</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <div class="tela">
+
+        <div class="card card-sobre">
+
+            <div class="topo-sobre">
+                <p class="texto-topo">GUIAS ANÔNIMAS</p>
+                <a href="{{ url_for('index') }}" class="voltar-sobre">Voltar</a>
+            </div>
+
+            <h1 class="titulo-secundario">Sobre o jogo</h1>
+
+            <!-- CRIADORES -->
+            <div class="criadores-box">
+
+                <!-- CRIADOR 1 -->
+                <div class="criador-item">
+                    <img 
+                        src="{{ url_for('static', filename='imagens/criador1.png') }}" 
+                        class="foto-criador-img"
+                        alt="Criador 1"
+                    >
+
+                    <h2>Ana Beatriz</h2>
+                </div>
+
+                <!-- CRIADOR 2 -->
+                <div class="criador-item">
+                    <img 
+                        src="{{ url_for('static', filename='imagens/criador2.png') }}" 
+                        class="foto-criador-img"
+                        alt="Criador 2"
+                    >
+
+                    <h2>Marcos Gabriel</h2>
+
+                </div>
+
+            </div>
+
+            <!-- TEXTO -->
+            <div class="texto-sobre-box">
+
+                <p>
+                    Este quiz numérico está sendo desenvolvido por Ana Beatriz Faustino e Marcos Gabriel Dias
+                </p>
+
+                <p>
+                    A proposta central é um quiz numérico multiplayer, onde os jogadores precisam
+                    responder perguntas utilizando apenas números, competindo entre si com base
+                    na precisão das respostas.
+                </p>
+
+                <p>
+                    O sistema ainda está em contrução e sujeito a alterações conforme os testes de usuabilidade.
+                </p>
+
+                <p>
+                    Este espaço pode ser editado posteriormente para incluir mais detalhes sobre
+                    o desenvolvimento do projeto, desafios enfrentados, tecnologias utilizadas e
+                    contribuições de cada integrante.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -9,12 +9,26 @@ def conectar_banco():
         database=os.environ.get("DB_NAME", "quiz_guias")
     )
 
-
-def buscar_perguntas():
+def buscar_perguntas(tema=None, dificuldade=None):
     conexao = conectar_banco()
     cursor = conexao.cursor(dictionary=True)
 
-    cursor.execute("SELECT id, pergunta, resposta_correta FROM perguntas")
+    sql = """
+        SELECT id, tema, dificuldade, pergunta, resposta_correta
+        FROM perguntas
+        WHERE 1=1
+    """
+    valores = []
+
+    if tema and tema.lower() != "aleatorio":
+        sql += " AND tema = %s"
+        valores.append(tema)
+
+    if dificuldade and dificuldade.lower() != "aleatorio":
+        sql += " AND dificuldade = %s"
+        valores.append(dificuldade)
+
+    cursor.execute(sql, valores)
     perguntas = cursor.fetchall()
 
     cursor.close()

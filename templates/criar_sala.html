@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sala {{ codigo }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
     <div class="tela">
         <div class="janela sala-box">
@@ -14,18 +16,18 @@
             <p class="subtitulo">Criadora da sala: <strong>{{ sala.criador }}</strong></p>
 
             {% if erro %}
-                <p class="mensagem erro">{{ erro }}</p>
+            <p class="mensagem erro">{{ erro }}</p>
             {% endif %}
 
             {% if sucesso %}
-                <p class="mensagem sucesso">{{ sucesso }}</p>
+            <p class="mensagem sucesso">{{ sucesso }}</p>
             {% endif %}
 
             <div class="bloco">
                 <h2>Jogadoras</h2>
                 <ul>
                     {% for jogador in sala.jogadores %}
-                        <li>{{ jogador }}</li>
+                    <li>{{ jogador }}</li>
                     {% endfor %}
                 </ul>
             </div>
@@ -34,23 +36,23 @@
                 <h2>Movimentação da sala</h2>
                 <div class="chat-sala">
                     {% for mensagem in sala.mensagens %}
-                        <p>{{ mensagem }}</p>
+                    <p>{{ mensagem }}</p>
                     {% endfor %}
                 </div>
             </div>
 
             <div class="acoes-sala">
                 {% if nome == sala.criador %}
-                    <form action="/iniciar_partida" method="POST">
-                        <input type="hidden" name="nome" value="{{ nome }}">
-                        <input type="hidden" name="codigo" value="{{ codigo }}">
+                <form action="/iniciar_partida" method="POST">
+                    <input type="hidden" name="nome" value="{{ nome }}">
+                    <input type="hidden" name="codigo" value="{{ codigo }}">
 
-                        {% if sala.jogadores|length >= 2 %}
-                            <button type="submit">INICIAR PARTIDA</button>
-                        {% else %}
-                            <button type="button" disabled>AGUARDANDO 2 JOGADORES</button>
-                        {% endif %}
-                    </form>
+                    {% if sala.jogadores|length >= 2 %}
+                    <button type="submit">INICIAR PARTIDA</button>
+                    {% else %}
+                    <button type="button" disabled>AGUARDANDO 2 JOGADORES</button>
+                    {% endif %}
+                </form>
                 {% endif %}
 
                 <form action="/sair_sala" method="POST">
@@ -62,4 +64,5 @@
         </div>
     </div>
 </body>
+
 </html>

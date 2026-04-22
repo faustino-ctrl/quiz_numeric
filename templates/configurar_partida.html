@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurar partida</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="tela">
+        <div class="card">
+            <p class="texto-topo">NOVA PARTIDA</p>
+            <h1 class="titulo-secundario">Configuração</h1>
+            <p class="subtitulo">Escolha o tema e a dificuldade</p>
+
+            <form action="{{ url_for('criar_sala') }}" method="POST" class="form-vertical">
+                <label for="tema">Tema</label>
+                <select name="tema" id="tema" class="select-jogo">
+                    <option value="Filosofia">Filosofia</option>
+                    <option value="Geografia">Geografia</option>
+                    <option value="Biologia">Biologia</option>
+                    <option value="Esporte">Esporte</option>
+                    <option value="Historia">História</option>
+                    <option value="aleatorio">Aleatório</option>
+                </select>
+
+                <label for="dificuldade">Dificuldade</label>
+                <select name="dificuldade" id="dificuldade" class="select-jogo">
+                    <option value="facil">Fácil</option>
+                    <option value="media">Média</option>
+                    <option value="dificil">Difícil</option>
+                    <option value="aleatorio">Aleatório</option>
+                </select>
+
+                <button type="submit" class="botao">Criar sala</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

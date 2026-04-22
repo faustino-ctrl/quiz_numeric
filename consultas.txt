@@ -7,24 +7,231 @@ CREATE TABLE perguntas (
     resposta_correta INT NOT NULL
 );
 
-INSERT INTO perguntas (pergunta, resposta_correta) VALUES
-('Quantos estados tem o Brasil?', 26),
-('Quantos planetas existem no Sistema Solar?', 8),
-('Quantos jogadores titulares tem um time de futebol?', 11),
-('Quantos segundos tem 1 minuto?', 60),
-('Quantos dias tem um ano comum?', 365),
-('Quantos lados tem um hexágono?', 6),
-('Quantas letras tem o alfabeto português?', 26),
-('Quantos meses tem um ano?', 12),
-('Quantos continentes existem no modelo mais usado no Brasil?', 6),
-('Quantos metros tem um quilômetro?', 1000),
-('Quantos dentes tem um adulto normalmente?', 32),
-('Quantas horas tem um dia?', 24),
-('Quantos minutos tem uma hora?', 60),
-('Quantos jogadores entram em quadra por time no vôlei?', 6),
-('Quantos lados tem um quadrado?', 4),
-('Quantos anos tem uma década?', 10),
-('Quantos dias tem fevereiro em ano bissexto?', 29),
-('Quantos zeros tem mil?', 3),
-('Quantos centímetros tem um metro?', 100),
-('Quantos anos tem um século?', 100);
+CREATE TABLE perguntas (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    tema VARCHAR(30) NOT NULL,
+    dificuldade VARCHAR(20) NOT NULL,
+    pergunta VARCHAR(255) NOT NULL,
+    resposta_correta INT NOT NULL
+);
+
+INSERT INTO perguntas (tema, dificuldade, pergunta, resposta_correta) VALUES
+('Filosofia','facil','Quantos filósofos formam o trio Sócrates, Platão e Aristóteles?',3),
+('Filosofia','facil','Em quantas partes Platão divide a alma na República?',3),
+('Filosofia','facil','Quantas virtudes cardeais são clássicas na filosofia antiga?',4),
+('Filosofia','facil','Quantos livros compõem A República, de Platão?',10),
+('Filosofia','facil','Quantos livros compõem a Ética a Nicômaco?',10),
+('Filosofia','facil','Quantas categorias Aristóteles apresenta em Categorias?',10),
+('Filosofia','facil','Quantos tipos principais de governo Aristóteles organiza em sua divisão mais conhecida?',6),
+('Filosofia','facil','Quantos níveis aparecem na linha dividida de Platão?',4),
+('Filosofia','facil','Quantos filósofos compõem a escola clássica grega mais lembrada nos estudos iniciais?',3),
+('Filosofia','facil','Quantas partes compõem a alegoria da caverna em sua estrutura mais resumida?',2),
+
+('Filosofia','media','Quantas críticas principais Kant publicou em seu período crítico?',3),
+('Filosofia','media','Quantas máximas Descartes apresenta no Discurso do Método?',4),
+('Filosofia','media','Quantos ensaios compõem a Genealogia da Moral?',3),
+('Filosofia','media','Quantos estados Auguste Comte propõe na lei dos três estados?',3),
+('Filosofia','media','Quantas metamorfoses do espírito Nietzsche apresenta em Zaratustra?',3),
+('Filosofia','media','Quantos volumes compõem O Mundo como Vontade e Representação na edição principal?',2),
+('Filosofia','media','Quantas substâncias Descartes distingue em sua metafísica principal?',3),
+('Filosofia','media','Quantos tipos principais de juízo Kant trabalha nas divisões mais didáticas?',4),
+('Filosofia','media','Quantos filósofos compõem a chamada escola helenística principal mais lembrada em introduções?',4),
+('Filosofia','media','Quantos séculos separam Platão de Kant aproximadamente?',22),
+
+('Filosofia','dificil','Quantas antinomias Kant apresenta na Crítica da Razão Pura?',4),
+('Filosofia','dificil','Quantas meditações compõem as Meditações Metafísicas de Descartes?',6),
+('Filosofia','dificil','Quantos livros compõem o Organon aristotélico tradicional?',6),
+('Filosofia','dificil','Quantos livros compõem a Metafísica de Aristóteles na divisão tradicional?',14),
+('Filosofia','dificil','Quantos capítulos tem a primeira dissertação da Genealogia da Moral?',17),
+('Filosofia','dificil','Quantos momentos compõem a tríade dialética simplificada atribuída a Hegel?',3),
+('Filosofia','dificil','Quantos anos aproximadamente viveu Aristóteles?',62),
+('Filosofia','dificil','Quantos anos aproximadamente viveu Platão?',80),
+('Filosofia','dificil','Quantos anos aproximadamente viveu Sócrates?',70),
+('Filosofia','dificil','Quantos livros compõem o tratado Política de Aristóteles?',8);
+
+INSERT INTO perguntas (tema, dificuldade, pergunta, resposta_correta) VALUES
+('Geografia','facil','Quantos estados tem o Brasil?',26),
+('Geografia','facil','Quantas regiões oficiais o Brasil possui?',5),
+('Geografia','facil','Quantos continentes existem no modelo mais usado no Brasil?',6),
+('Geografia','facil','Quantos oceanos existem na classificação mais usada hoje?',5),
+('Geografia','facil','Quantos pontos cardeais existem?',4),
+('Geografia','facil','Quantos hemisférios a linha do Equador cria?',2),
+('Geografia','facil','Quantos polos geográficos existem?',2),
+('Geografia','facil','Quantos estados há na região Sul?',3),
+('Geografia','facil','Quantos estados há na região Sudeste?',4),
+('Geografia','facil','Quantos estados há na região Nordeste?',9),
+
+('Geografia','media','Quantos estados há na região Norte?',7),
+('Geografia','media','Quantos estados há na região Centro-Oeste?',3),
+('Geografia','media','Quantos países fazem fronteira com o Brasil?',10),
+('Geografia','media','Quantos fusos horários o Brasil possui atualmente?',4),
+('Geografia','media','Quantos países existem na América do Sul?',12),
+('Geografia','media','Quantos países compõem a América Central continental?',7),
+('Geografia','media','Quantos graus tem aproximadamente o Trópico de Capricórnio?',23),
+('Geografia','media','Quantos graus tem aproximadamente o Círculo Polar Ártico?',66),
+('Geografia','media','Quantos países formavam o BRICS ampliado em 2024?',10),
+('Geografia','media','Quantos países sem saída para o mar existem na América do Sul?',2),
+
+('Geografia','dificil','Quantos municípios o Brasil possui?',5570),
+('Geografia','dificil','Quantos países fazem parte da União Europeia em 2025?',27),
+('Geografia','dificil','Quantos estados existem nos Estados Unidos?',50),
+('Geografia','dificil','Quantos países existem na África?',54),
+('Geografia','dificil','Quantos países existem na Ásia?',49),
+('Geografia','dificil','Quantos quilômetros tem aproximadamente a linha do Equador?',40075),
+('Geografia','dificil','Quantos metros abaixo do nível do mar fica aproximadamente o Mar Morto?',430),
+('Geografia','dificil','Quantos países atravessa o rio Danúbio?',10),
+('Geografia','dificil','Quantos países são membros plenos do Mercosul atualmente?',5),
+('Geografia','dificil','Quantos estados mexicanos existem?',32);
+
+INSERT INTO perguntas (tema, dificuldade, pergunta, resposta_correta) VALUES
+('Geografia','facil','Quantos estados tem o Brasil?',26),
+('Geografia','facil','Quantas regiões oficiais o Brasil possui?',5),
+('Geografia','facil','Quantos continentes existem no modelo mais usado no Brasil?',6),
+('Geografia','facil','Quantos oceanos existem na classificação mais usada hoje?',5),
+('Geografia','facil','Quantos pontos cardeais existem?',4),
+('Geografia','facil','Quantos hemisférios a linha do Equador cria?',2),
+('Geografia','facil','Quantos polos geográficos existem?',2),
+('Geografia','facil','Quantos estados há na região Sul?',3),
+('Geografia','facil','Quantos estados há na região Sudeste?',4),
+('Geografia','facil','Quantos estados há na região Nordeste?',9),
+
+('Geografia','media','Quantos estados há na região Norte?',7),
+('Geografia','media','Quantos estados há na região Centro-Oeste?',3),
+('Geografia','media','Quantos países fazem fronteira com o Brasil?',10),
+('Geografia','media','Quantos fusos horários o Brasil possui atualmente?',4),
+('Geografia','media','Quantos países existem na América do Sul?',12),
+('Geografia','media','Quantos países compõem a América Central continental?',7),
+('Geografia','media','Quantos graus tem aproximadamente o Trópico de Capricórnio?',23),
+('Geografia','media','Quantos graus tem aproximadamente o Círculo Polar Ártico?',66),
+('Geografia','media','Quantos países formavam o BRICS ampliado em 2024?',10),
+('Geografia','media','Quantos países sem saída para o mar existem na América do Sul?',2),
+
+('Geografia','dificil','Quantos municípios o Brasil possui?',5570),
+('Geografia','dificil','Quantos países fazem parte da União Europeia em 2025?',27),
+('Geografia','dificil','Quantos estados existem nos Estados Unidos?',50),
+('Geografia','dificil','Quantos países existem na África?',54),
+('Geografia','dificil','Quantos países existem na Ásia?',49),
+('Geografia','dificil','Quantos quilômetros tem aproximadamente a linha do Equador?',40075),
+('Geografia','dificil','Quantos metros abaixo do nível do mar fica aproximadamente o Mar Morto?',430),
+('Geografia','dificil','Quantos países atravessa o rio Danúbio?',10),
+('Geografia','dificil','Quantos países são membros plenos do Mercosul atualmente?',5),
+('Geografia','dificil','Quantos estados mexicanos existem?',32);
+
+INSERT INTO perguntas (tema, dificuldade, pergunta, resposta_correta) VALUES
+('Biologia','facil','Quantas patas tem um inseto?',6),
+('Biologia','facil','Quantas câmaras tem o coração humano?',4),
+('Biologia','facil','Quantos pulmões um ser humano normalmente possui?',2),
+('Biologia','facil','Quantos cromossomos possui um ser humano em células somáticas?',46),
+('Biologia','facil','Quantos pares de cromossomos o ser humano possui?',23),
+('Biologia','facil','Quantos olhos compostos uma mosca tem?',2),
+('Biologia','facil','Quantos pares de pernas tem uma aranha?',4),
+('Biologia','facil','Quantos ossos tem um adulto humano em média?',206),
+('Biologia','facil','Quantas bases nitrogenadas formam o DNA?',4),
+('Biologia','facil','Quantos dentes permanentes um adulto normalmente possui?',32),
+
+('Biologia','media','Quantos aminoácidos padrão existem na síntese proteica?',20),
+('Biologia','media','Quantas fases principais compõem a mitose?',4),
+('Biologia','media','Quantas fases principais compõem a meiose se contarmos as duas divisões?',8),
+('Biologia','media','Quantos litros de sangue circulam aproximadamente em um adulto?',5),
+('Biologia','media','Quantos segmentos corporais principais tem um inseto?',3),
+('Biologia','media','Quantos códons de parada existem no código genético?',3),
+('Biologia','media','Quantos meses dura aproximadamente uma gestação humana?',9),
+('Biologia','media','Quantos neurônios aproximadamente tem o cérebro humano em bilhões?',86),
+('Biologia','media','Quantos litros de ar cabem aproximadamente na capacidade vital pulmonar?',5),
+('Biologia','media','Quantos reinos havia no modelo clássico de cinco reinos?',5),
+
+('Biologia','dificil','Quantos pares de nervos cranianos o ser humano possui?',12),
+('Biologia','dificil','Quantos pares de costelas o ser humano normalmente possui?',12),
+('Biologia','dificil','Quantos tipos sanguíneos principais surgem da combinação ABO com Rh?',8),
+('Biologia','dificil','Quantas vértebras compõem a coluna humana em média?',33),
+('Biologia','dificil','Quantos ATP líquidos a glicólise produz diretamente?',2),
+('Biologia','dificil','Quantas membranas possui a mitocôndria?',2),
+('Biologia','dificil','Quantos cromossomos tem uma célula humana haploide?',23),
+('Biologia','dificil','Quantas válvulas tem o coração humano?',4),
+('Biologia','dificil','Quantas semanas dura aproximadamente a gestação humana completa?',40),
+('Biologia','dificil','Quantos genes codificadores de proteínas existem no genoma humano em milhares, aproximadamente?',20);
+
+INSERT INTO perguntas (tema, dificuldade, pergunta, resposta_correta) VALUES
+('Esporte','facil','Quantos jogadores titulares tem um time de futebol em campo?',11),
+('Esporte','facil','Quantos tempos tem uma partida de futebol?',2),
+('Esporte','facil','Quantos minutos dura cada tempo do futebol profissional?',45),
+('Esporte','facil','Quantos jogadores entram em quadra por time no vôlei?',6),
+('Esporte','facil','Quantos jogadores entram em quadra por time no basquete?',5),
+('Esporte','facil','Quantos lados tem um ringue de boxe tradicional?',4),
+('Esporte','facil','Quantas traves existem em um campo de futebol?',2),
+('Esporte','facil','Quantos árbitros centrais existem em uma partida de futebol?',1),
+('Esporte','facil','Quantos sets no máximo pode ter uma partida de vôlei melhor de cinco?',5),
+('Esporte','facil','Quantos jogadores compõem um time de duplas no tênis?',2),
+
+('Esporte','media','Quantos jogadores tem um time de futsal em quadra?',5),
+('Esporte','media','Quantos jogadores tem um time de handebol em quadra?',7),
+('Esporte','media','Quantos jogadores ficam em campo na defesa no beisebol?',9),
+('Esporte','media','Quantos segundos dura a posse de bola no basquete FIBA?',24),
+('Esporte','media','Quantos pontos vale um lance livre no basquete?',1),
+('Esporte','media','Quantos pontos vale uma cesta dentro da linha de três?',2),
+('Esporte','media','Quantos pontos vale um touchdown antes do extra point?',6),
+('Esporte','media','Quantos atletas compõem uma equipe de revezamento 4x100?',4),
+('Esporte','media','Quantos buracos tem uma volta completa no golfe?',18),
+('Esporte','media','Quantos sets no máximo pode ter uma partida masculina de Grand Slam?',5),
+
+('Esporte','dificil','Quantos metros tem a maratona oficial?',42),
+('Esporte','dificil','Quantos rounds no máximo tem uma luta de boxe valendo título mundial?',12),
+('Esporte','dificil','Quantos pontos vale uma vitória no futebol?',3),
+('Esporte','dificil','Quantos metros mede uma volta completa em pista olímpica?',400),
+('Esporte','dificil','Quantos segundos dura um round olímpico de boxe masculino?',180),
+('Esporte','dificil','Quantos jogadores um elenco de Copa do Mundo masculina pode inscrever?',26),
+('Esporte','dificil','Quantos minutos totais tem uma partida de basquete FIBA?',40),
+('Esporte','dificil','Quantos períodos tem uma partida de hóquei no gelo?',3),
+('Esporte','dificil','Quantos quilos pesa aproximadamente a bala do arremesso de peso masculino?',7),
+('Esporte','dificil','Quantos jogadores titulares tem um time de rugby union em campo?',15);
+
+INSERT INTO perguntas (tema, dificuldade, pergunta, resposta_correta) VALUES
+('Historia','facil','Quantos anos durou aproximadamente a Primeira Guerra Mundial?',4),
+('Historia','facil','Quantos anos durou aproximadamente a Segunda Guerra Mundial?',6),
+('Historia','facil','Em que ano foi proclamada a República no Brasil?',1889),
+('Historia','facil','Em que século ocorreu a Independência do Brasil? Use o número do século.',19),
+('Historia','facil','Quantos poderes a Constituição brasileira estabelece?',3),
+('Historia','facil','Quantos navios principais compunham a frota de Cabral na versão escolar mais comum?',13),
+('Historia','facil','Quantos presidentes militares governaram o Brasil entre 1964 e 1985?',5),
+('Historia','facil','Quantos anos durou o governo de Juscelino Kubitschek?',5),
+('Historia','facil','Quantos séculos separam 1500 e 2000?',5),
+('Historia','facil','Quantos anos durou o Estado Novo?',8),
+
+('Historia','media','Em que ano caiu o Muro de Berlim?',1989),
+('Historia','media','Quantos anos durou aproximadamente a Guerra Fria de 1947 a 1991?',44),
+('Historia','media','Quantos anos durou o Império do Brasil?',67),
+('Historia','media','Quantos séculos durou aproximadamente a Idade Média na periodização tradicional?',10),
+('Historia','media','Quantos anos durou a Guerra do Paraguai?',6),
+('Historia','media','Quantos artigos tinha originalmente a Declaração dos Direitos do Homem e do Cidadão?',17),
+('Historia','media','Quantos mandatos presidenciais Getúlio Vargas exerceu?',2),
+('Historia','media','Quantos anos durou a escravidão legal no Brasil independente, de 1822 a 1888?',66),
+('Historia','media','Quantos anos durou a presidência de Fernando Henrique Cardoso?',8),
+('Historia','media','Quantos séculos separam a queda do Império Romano do Ocidente e 1500?',10),
+
+('Historia','dificil','Quantos anos durou a República Velha?',41),
+('Historia','dificil','Quantos anos durou a Revolução Francesa em sua fase principal, de 1789 a 1799?',10),
+('Historia','dificil','Quantos anos durou a ditadura militar brasileira?',21),
+('Historia','dificil','Quantos anos se passaram entre a Lei Áurea e a Proclamação da República?',1),
+('Historia','dificil','Quantos anos durou o Segundo Reinado?',49),
+('Historia','dificil','Quantos anos durou a presidência de Lula em seus dois primeiros mandatos consecutivos?',8),
+('Historia','dificil','Quantos anos durou a presidência de João Goulart?',3),
+('Historia','dificil','Quantos anos se passaram entre a Independência do Brasil e a Abolição da Escravidão?',66),
+('Historia','dificil','Quantos anos durou o governo de Dom Pedro II se considerarmos o Segundo Reinado?',49),
+('Historia','dificil','Quantos anos durou aproximadamente a Guerra dos Cem Anos?',116);
+
+USE quiz_guias;
+
+CREATE TABLE IF NOT EXISTS usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(5) NOT NULL,
+    email VARCHAR(120) NOT NULL,
+    senha_hash VARCHAR(255) NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_username (username),
+    UNIQUE KEY unique_email (email)
+);
+
+ALTER TABLE usuarios
+MODIFY username VARCHAR(5)
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_bin NOT NULL;
