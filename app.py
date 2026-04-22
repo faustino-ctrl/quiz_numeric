@@ -234,14 +234,15 @@ def finalizar_ou_continuar(codigo):
     sala["mensagens"].append("Desempate encerrado. Partida finalizada.")
     emitir_estado_sala(codigo)
 
+import os
+
 def conectar_banco():
     return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="",
-        database="quiz_guias"
+        host=os.environ.get("DB_HOST", "localhost"),
+        user=os.environ.get("DB_USER", "root"),
+        password=os.environ.get("DB_PASSWORD", ""),
+        database=os.environ.get("DB_NAME", "quiz_guias")
     )
-
 def buscar_usuario_por_username(username):
     conexao = conectar_banco()
     cursor = conexao.cursor(dictionary=True)
