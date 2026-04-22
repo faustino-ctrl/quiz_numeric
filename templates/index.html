@@ -1,28 +1,29 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guias Anônimas</title>
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
-    <div class="tela pixel-bg">
-        <div class="decor decor-1"></div>
-        <div class="decor decor-2"></div>
 
-        <main class="painel painel-menor">
-            <h1 class="titulo-principal">Insira seu nome!</h1>
+    <div class="tela">
+        <div class="card">
 
-            {% if erro %}
-                <p class="mensagem erro">{{ erro }}</p>
-            {% endif %}
+            <h1 class="titulo">INSIRA SEU NOME</h1>
 
-            <form action="/lobby" method="POST" class="formulario">
-                <input type="text" id="nome" name="nome" placeholder="" maxlength="20" autocomplete="off">
-                <button type="submit" class="botao-pixel">Entrar</button>
+            <form action="/lobby" method="POST">
+                <input type="text" name="nome" class="input" placeholder="..." required>
+
+                <button class="botao">ENTRAR</button>
             </form>
-        </main>
+
+        </div>
     </div>
+
 </body>
+
 </html>

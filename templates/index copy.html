@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Guias Anônimas</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="tela">
+    <div class="card">
+
+        <h1 class="titulo">INSIRA SEU NOME</h1>
+
+        <form action="/lobby" method="POST">
+            <input 
+                type="text" 
+                name="nome" 
+                class="input" 
+                placeholder="..."
+                required
+            >
+
+            <button class="botao">ENTRAR</button>
+        </form>
+
+    </div>
+</div>
+
+</body>
+</html>

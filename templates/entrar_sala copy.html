@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar em Sala</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div class="tela">
+        <div class="card">
+            <p class="texto-topo">ACESSO À SALA</p>
+            <h1 class="titulo-secundario">Código</h1>
+            <p class="subtitulo">Digite o número da sala</p>
+
+            {% if erro %}
+                <p class="mensagem erro">{{ erro }}</p>
+            {% endif %}
+
+            <form action="{{ url_for('entrar_sala') }}" method="POST" class="form-vertical">
+                <input
+                    type="text"
+                    id="codigo"
+                    name="codigo"
+                    class="input"
+                    placeholder="12345"
+                    maxlength="5"
+                    autocomplete="off"
+                    required
+                >
+
+                <button type="submit" class="botao">Entrar</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

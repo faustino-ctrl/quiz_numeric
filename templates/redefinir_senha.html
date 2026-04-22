@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir senha</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="tela">
+        <div class="card">
+            <p class="texto-topo">CONTA ENCONTRADA</p>
+            <h1 class="titulo-secundario">{{ username }}</h1>
+
+            {% if erro %}
+                <p class="mensagem erro">{{ erro }}</p>
+            {% endif %}
+
+            <form action="{{ url_for('redefinir_senha') }}" method="POST" class="form-vertical">
+                <input type="hidden" name="email" value="{{ email }}">
+
+                <label>Nova senha</label>
+                <input type="password" name="nova_senha" class="input" required>
+
+                <button type="submit" class="botao">Salvar nova senha</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
