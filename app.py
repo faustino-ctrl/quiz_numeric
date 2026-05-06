@@ -15,7 +15,7 @@ app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "sua_chave_secreta_aqui_
 
 # Para Gunicorn + Socket.IO, use:
 # gunicorn --worker-class eventlet -w 1 app:app
-socketio = SocketIO(app, async_mode="eventlet", cors_allowed_origins="*")
+socketio = SocketIO(app, async_mode=None, cors_allowed_origins="*")
 
 salas = {}
 player_sid_map = {}
