@@ -3,27 +3,5 @@ Flask-SocketIO==5.5.1
 mysql-connector-python==9.2.0
 gunicorn==21.2.0
 eventlet==0.33.3
+gevent==24.2.1
 email-validator==2.2.0
-pip install flask mysql-connector-python
-pip install email-validator
-
-<p>
-                    Este quiz numérico está sendo desenvolvido por Ana Beatriz Faustino e Marcos Gabriel Dias
-                </p>
-
-                <p>
-                    A proposta central é um quiz numérico multiplayer, onde os jogadores precisam
-                    responder perguntas utilizando apenas números, competindo entre si com base
-                    na precisão das respostas.
-                </p>
-
-                <p>
-                    O sistema ainda está em contrução e sujeito a alterações conforme os testes de usuabilidade
-                </p>
-
-                <p>
-                    Este espaço pode ser editado posteriormente para incluir mais detalhes sobre
-                    o desenvolvimento do projeto, desafios enfrentados, tecnologias utilizadas e
-                    contribuições de cada integrante.
-                </p>
-
