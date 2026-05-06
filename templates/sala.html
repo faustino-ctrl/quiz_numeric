@@ -12,319 +12,120 @@
 <body data-nome='{{ nome|tojson }}' data-codigo='{{ codigo|tojson }}' data-token='{{ token|tojson }}'>
 
     <div class="tela">
-        <div class="card sala-card">
+        <div class="janela sala-card janela-azul">
 
-            <div class="topo-sala-novo">
-                <div>
-                    <p class="texto-topo">SALA {{ codigo }}</p>
-                    <h1 class="titulo-sala-novo" id="texto-pergunta">Aguardando início da partida</h1>
-                </div>
-
-                <div class="menu-sala">
-                    <button type="button" id="botao-menu" class="menu-btn">☰</button>
-
-                    <div id="dropdown-menu" class="menu-dropdown" style="display:none;">
-                        <p><strong>Criadora:</strong> <span id="criador-sala">{{ sala.jogadores[sala.criador_token].nome
-                                }}</span></p>
-                        <p><strong>Código:</strong> <span id="codigo-sala-menu">{{ codigo }}</span></p>
-                        <button type="button" id="botao-sair" class="botao secundario">Sair da sala</button>
-                    </div>
-                </div>
+            <div class="barra-janela">
+                <span>SALA {{ codigo }}</span>
             </div>
 
-            <p id="mensagem-erro" class="mensagem erro" style="display:none;"></p>
-
-            <section id="tela-espera">
-                <div class="grid-espera">
-                    <div class="box-sala">
-                        <h2>Jogadoras na sala</h2>
-                        <ul id="lista-jogadoras">
-                            {% for token_jogadora, dados in sala.jogadores.items() %}
-                            <li>{{ dados.nome }}</li>
-                            {% endfor %}
-                        </ul>
+            <div class="conteudo-janela">
+                <div class="topo-sala-novo">
+                    <div>
+                        <p class="texto-topo">QUIZ NUMÉRICO</p>
+                        <h1 class="titulo-sala-novo" id="texto-pergunta">Aguardando início da partida</h1>
+                        <p class="subtitulo rodada-info" id="texto-rodada"></p>
                     </div>
 
-                    <div class="box-sala">
-                        <h2>Movimentação da sala</h2>
-                        <div class="area-texto" id="chat-sala">
-                            {% for mensagem in sala.mensagens %}
-                            <p>{{ mensagem }}</p>
-                            {% endfor %}
+                    <div class="menu-sala">
+                        <button type="button" id="botao-menu" class="menu-btn">☰</button>
+
+                        <div id="dropdown-menu" class="menu-dropdown" style="display:none;">
+                            <p><strong>Criador(a):</strong> <span id="criador-sala">{{ sala.jogadores[sala.criador_token].nome }}</span></p>
+                            <p><strong>Código:</strong> <span id="codigo-sala-menu">{{ codigo }}</span></p>
+                            <button type="button" id="botao-sair" class="botao secundario">Sair da sala</button>
                         </div>
                     </div>
                 </div>
 
-                <div class="acoes-centro">
-                    <button type="button" id="botao-iniciar" class="botao" style="display:none;">Iniciar
-                        partida</button>
-                </div>
-            </section>
+                <p id="mensagem-erro" class="mensagem erro" style="display:none;"></p>
+                <p id="aviso-rodada" class="aviso-rodada" style="display:none;"></p>
 
-            <section id="tela-jogo" style="display:none;">
-                <div class="layout-jogo-novo">
-                    <aside class="placar-lateral">
-                        <h2>Partida</h2>
-                        <ul id="lista-pontuacao" class="lista-placar"></ul>
-                    </aside>
+                <section id="tela-espera">
+                    <div class="grid-espera">
+                        <div class="box-sala janela-verde mini-janela">
+                            <div class="barra-janela pequena">
+                                <span>JOGADORES</span>
+                            </div>
+                            <div class="conteudo-mini">
+                                <ul id="lista-jogadoras">
+                                    {% for token_jogadora, dados in sala.jogadores.items() %}
+                                    <li>{{ dados.nome }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
 
-                    <div class="jogo-centro">
-                        <p class="vez-jogador" id="texto-turno"></p>
-
-                        <div class="box-sala respostas-box">
-                            <h2>Respostas</h2>
-                            <div class="area-texto" id="historico-respostas"></div>
-
-                            <div class="area-resposta">
-                                <input type="number" id="campo-resposta" class="input" placeholder="Responda aqui...">
-                                <button id="botao-responder" type="button" class="botao">Responder</button>
+                        <div class="box-sala janela-vermelha mini-janela">
+                            <div class="barra-janela pequena">
+                                <span>MOVIMENTAÇÃO</span>
+                            </div>
+                            <div class="conteudo-mini area-texto" id="chat-sala">
+                                {% for mensagem in sala.mensagens %}
+                                <p>{{ mensagem }}</p>
+                                {% endfor %}
                             </div>
                         </div>
                     </div>
-                </div>
-            </section>
 
-            <div class="box-sala ranking-box" id="ranking-final" style="display:none;">
-                <h2>Ranking final</h2>
-                <ol id="lista-ranking"></ol>
-                <button type="button" id="botao-voltar-espera" class="botao">Voltar para sala de espera</button>
+                    <div class="acoes-centro">
+                        <button type="button" id="botao-iniciar" class="botao" style="display:none;">Iniciar partida</button>
+                    </div>
+                </section>
+
+                <section id="tela-jogo" style="display:none;">
+                    <div class="layout-jogo-novo">
+                        <aside class="placar-lateral janela-verde mini-janela">
+                            <div class="barra-janela pequena">
+                                <span>PLACAR</span>
+                            </div>
+                            <div class="conteudo-mini">
+                                <ul id="lista-pontuacao" class="lista-placar"></ul>
+                            </div>
+                        </aside>
+
+                        <div class="jogo-centro">
+                            <div class="painel-turno">
+                                <p class="vez-jogador" id="texto-turno"></p>
+                                <div class="timer-box" aria-label="Tempo da jogada">
+                                    <div class="timer-trilho">
+                                        <div id="barra-tempo" class="timer-barra"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="box-sala respostas-box janela-amarela mini-janela">
+                                <div class="barra-janela pequena">
+                                    <span>RESPOSTAS.EXE</span>
+                                </div>
+
+                                <div class="conteudo-mini">
+                                    <div class="area-texto" id="historico-respostas"></div>
+
+                                    <div class="area-resposta">
+                                        <input type="number" id="campo-resposta" class="input" placeholder="Responda aqui...">
+                                        <button id="botao-responder" type="button" class="botao">Responder</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="box-sala ranking-box janela-vermelha mini-janela" id="ranking-final" style="display:none;">
+                    <div class="barra-janela pequena">
+                        <span>RANKING FINAL</span>
+                    </div>
+                    <div class="conteudo-mini">
+                        <ol id="lista-ranking"></ol>
+                        <button type="button" id="botao-voltar-espera" class="botao">Voltar para sala de espera</button>
+                    </div>
+                </div>
             </div>
 
         </div>
     </div>
 
-    <script>
-        const socket = io();
-
-        const jogadorNome = JSON.parse(document.body.dataset.nome);
-        const salaCodigo = JSON.parse(document.body.dataset.codigo);
-        const jogadorToken = JSON.parse(document.body.dataset.token);
-
-        const listaJogadoras = document.getElementById("lista-jogadoras");
-        const listaPontuacao = document.getElementById("lista-pontuacao");
-        const criadorSala = document.getElementById("criador-sala");
-        const codigoSalaMenu = document.getElementById("codigo-sala-menu");
-        const chatSala = document.getElementById("chat-sala");
-        const historicoRespostas = document.getElementById("historico-respostas");
-        const telaEspera = document.getElementById("tela-espera");
-        const telaJogo = document.getElementById("tela-jogo");
-        const textoPergunta = document.getElementById("texto-pergunta");
-        const textoTurno = document.getElementById("texto-turno");
-        const campoResposta = document.getElementById("campo-resposta");
-        const botaoResponder = document.getElementById("botao-responder");
-        const botaoIniciar = document.getElementById("botao-iniciar");
-        const botaoSair = document.getElementById("botao-sair");
-        const mensagemErro = document.getElementById("mensagem-erro");
-        const rankingFinal = document.getElementById("ranking-final");
-        const listaRanking = document.getElementById("lista-ranking");
-        const botaoVoltarEspera = document.getElementById("botao-voltar-espera");
-        const botaoMenu = document.getElementById("botao-menu");
-        const dropdownMenu = document.getElementById("dropdown-menu");
-
-        function mostrarErro(texto) {
-            mensagemErro.textContent = texto;
-            mensagemErro.style.display = "block";
-            setTimeout(function () {
-                mensagemErro.style.display = "none";
-            }, 2500);
-        }
-
-        function ordenarPorChegada(jogadores) {
-            return jogadores.slice().sort(function (a, b) {
-                return a.ordem_chegada - b.ordem_chegada;
-            });
-        }
-
-        function atualizarListaJogadoras(jogadores) {
-            listaJogadoras.innerHTML = "";
-            const lista = ordenarPorChegada(jogadores);
-
-            for (let i = 0; i < lista.length; i++) {
-                const li = document.createElement("li");
-                li.textContent = lista[i].nome;
-                listaJogadoras.appendChild(li);
-            }
-        }
-
-        function atualizarPontuacao(jogadores, turnoToken) {
-            listaPontuacao.innerHTML = "";
-            const lista = ordenarPorChegada(jogadores);
-
-            for (let i = 0; i < lista.length; i++) {
-                const li = document.createElement("li");
-                li.className = "item-placar";
-
-                if (lista[i].token === turnoToken) {
-                    li.classList.add("ativo");
-                }
-
-                li.textContent = lista[i].nome + " - " + lista[i].pontos + "p";
-                listaPontuacao.appendChild(li);
-            }
-        }
-
-        function atualizarMensagens(container, mensagens) {
-            container.innerHTML = "";
-
-            for (let i = 0; i < mensagens.length; i++) {
-                const p = document.createElement("p");
-                p.textContent = mensagens[i];
-                container.appendChild(p);
-            }
-
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function atualizarHistoricoRespostas(respostas) {
-            historicoRespostas.innerHTML = "";
-
-            for (let i = 0; i < respostas.length; i++) {
-                const p = document.createElement("p");
-
-                if (respostas[i].pontos_recebidos > 0) {
-                    p.textContent = respostas[i].nome + " respondeu " + respostas[i].resposta + " e ganhou " + respostas[i].pontos_recebidos + " pts";
-                } else {
-                    p.textContent = respostas[i].nome + " respondeu " + respostas[i].resposta;
-                }
-
-                historicoRespostas.appendChild(p);
-            }
-
-            historicoRespostas.scrollTop = historicoRespostas.scrollHeight;
-        }
-
-        function atualizarRanking(ranking) {
-            listaRanking.innerHTML = "";
-
-            for (let i = 0; i < ranking.length; i++) {
-                const li = document.createElement("li");
-                li.textContent = ranking[i].nome + " - " + ranking[i].pontos + " pts";
-                listaRanking.appendChild(li);
-            }
-        }
-
-        function atualizarTela(dados) {
-            criadorSala.textContent = dados.criador_nome;
-            codigoSalaMenu.textContent = dados.codigo;
-
-            const souCriadora = jogadorToken === dados.criador_token;
-
-            if (!dados.em_jogo) {
-                telaEspera.style.display = "block";
-                telaJogo.style.display = "none";
-
-                textoPergunta.textContent = "Aguardando início da partida";
-
-                campoResposta.value = "";
-                campoResposta.disabled = true;
-                botaoResponder.disabled = true;
-
-                atualizarListaJogadoras(dados.jogadores);
-                atualizarMensagens(chatSala, dados.mensagens);
-                historicoRespostas.innerHTML = "";
-                listaPontuacao.innerHTML = "";
-
-                if (dados.mostrar_ranking_final) {
-                    rankingFinal.style.display = "block";
-                    atualizarRanking(dados.ranking);
-                    botaoIniciar.style.display = "none";
-                } else {
-                    rankingFinal.style.display = "none";
-
-                    if (souCriadora && dados.jogadores.length >= 2) {
-                        botaoIniciar.style.display = "inline-block";
-                    } else {
-                        botaoIniciar.style.display = "none";
-                    }
-                }
-            } else {
-                telaEspera.style.display = "none";
-                telaJogo.style.display = "block";
-                rankingFinal.style.display = "none";
-                botaoIniciar.style.display = "none";
-
-                textoPergunta.textContent = dados.pergunta_atual;
-                textoTurno.textContent = "Vez de: " + dados.turno_nome;
-
-                atualizarPontuacao(dados.jogadores, dados.turno_token);
-                atualizarHistoricoRespostas(dados.historico_respostas);
-
-                const minhaVez = jogadorToken === dados.turno_token;
-                campoResposta.disabled = !minhaVez;
-                botaoResponder.disabled = !minhaVez;
-
-                if (minhaVez) {
-                    campoResposta.focus();
-                }
-            }
-        }
-
-        botaoMenu.addEventListener("click", function () {
-            const aberto = dropdownMenu.style.display === "block";
-            dropdownMenu.style.display = aberto ? "none" : "block";
-        });
-
-        document.addEventListener("click", function (evento) {
-            if (!evento.target.closest(".menu-sala")) {
-                dropdownMenu.style.display = "none";
-            }
-        });
-
-        socket.on("connect", function () {
-            socket.emit("entrar_socket_sala", {
-                codigo: salaCodigo,
-                token: jogadorToken
-            });
-        });
-
-        socket.on("estado_sala", function (dados) {
-            atualizarTela(dados);
-        });
-
-        socket.on("erro_jogo", function (dados) {
-            mostrarErro(dados.mensagem);
-        });
-
-        botaoIniciar.addEventListener("click", function () {
-            socket.emit("iniciar_partida", {
-                codigo: salaCodigo,
-                token: jogadorToken
-            });
-        });
-
-        botaoResponder.addEventListener("click", function () {
-            socket.emit("enviar_resposta", {
-                codigo: salaCodigo,
-                token: jogadorToken,
-                resposta: campoResposta.value
-            });
-            campoResposta.value = "";
-        });
-
-        campoResposta.addEventListener("keydown", function (evento) {
-            if (evento.key === "Enter" && !botaoResponder.disabled) {
-                botaoResponder.click();
-            }
-        });
-
-        botaoVoltarEspera.addEventListener("click", function () {
-            socket.emit("voltar_para_espera", {
-                codigo: salaCodigo
-            });
-        });
-
-        botaoSair.addEventListener("click", function () {
-            socket.emit("sair_da_sala", {
-                codigo: salaCodigo,
-                token: jogadorToken
-            });
-
-            setTimeout(function () {
-                window.location.href = "/";
-            }, 200);
-        });
-    </script>
-
+    <script src="{{ url_for('static', filename='js/sala.js') }}"></script>
 </body>
 
 </html>
