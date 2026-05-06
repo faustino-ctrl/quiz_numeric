@@ -3,6 +3,7 @@ Flask-SocketIO==5.5.1
 mysql-connector-python==9.2.0
 gunicorn==21.2.0
 eventlet==0.33.3
+email-validator==2.2.0
 pip install flask mysql-connector-python
 pip install email-validator
 

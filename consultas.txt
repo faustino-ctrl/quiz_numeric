@@ -3,12 +3,6 @@ USE quiz_guias;
 
 CREATE TABLE perguntas (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    pergunta VARCHAR(255) NOT NULL,
-    resposta_correta INT NOT NULL
-);
-
-CREATE TABLE perguntas (
-    id INT AUTO_INCREMENT PRIMARY KEY,
     tema VARCHAR(30) NOT NULL,
     dificuldade VARCHAR(20) NOT NULL,
     pergunta VARCHAR(255) NOT NULL,
@@ -223,15 +217,10 @@ USE quiz_guias;
 
 CREATE TABLE IF NOT EXISTS usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(5) NOT NULL,
+    username VARCHAR(5)  CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL UNIQUE,
     email VARCHAR(120) NOT NULL,
     senha_hash VARCHAR(255) NOT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY unique_username (username),
     UNIQUE KEY unique_email (email)
 );
-
-ALTER TABLE usuarios
-MODIFY username VARCHAR(5)
-CHARACTER SET utf8mb4
-COLLATE utf8mb4_bin NOT NULL;

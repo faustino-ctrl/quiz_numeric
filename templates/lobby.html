@@ -22,22 +22,19 @@
 
             <div class="grupo-botoes">
 
-                <!-- CRIAR SALA -->
                 <form action="{{ url_for('configurar_partida') }}" method="GET">
                     <button type="submit" class="botao">
                         Criar sala
                     </button>
                 </form>
 
-                <!-- ENTRAR EM SALA -->
                 <form action="{{ url_for('pagina_entrar_sala') }}" method="GET">
                     <button type="submit" class="botao">
                         Entrar em sala
                     </button>
                 </form>
 
-                <!-- LOGOUT -->
-                <a href="{{ url_for('logout') }}" class="botao-link">
+                <a href="{{ url_for('logout') }}" class="botao-link confirmar-logout">
                     Sair da conta
                 </a>
 
@@ -46,6 +43,7 @@
         </div>
 
     </div>
+    <script src="{{ url_for('static', filename='js/global.js') }}"></script>
 </body>
 
 </html>

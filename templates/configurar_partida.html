@@ -13,6 +13,10 @@
             <h1 class="titulo-secundario">Configuração</h1>
             <p class="subtitulo">Escolha o tema e a dificuldade</p>
 
+            {% if erro %}
+                <p class="mensagem erro">{{ erro }}</p>
+            {% endif %}
+
             <form action="{{ url_for('criar_sala') }}" method="POST" class="form-vertical">
                 <label for="tema">Tema</label>
                 <select name="tema" id="tema" class="select-jogo">
