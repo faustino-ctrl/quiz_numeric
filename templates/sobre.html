@@ -4,79 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sobre o jogo</title>
-
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
-
 <body>
-
-    <div class="tela">
-
+    <div class="tela tela-sobre">
         <div class="card card-sobre">
-
             <div class="topo-sobre">
-                <p class="texto-topo">QUIZ NUMÉRICO</p>
+                <h1 class="titulo-secundario">Sobre o jogo</h1>
                 <a href="{{ url_for('index') }}" class="voltar-sobre">Voltar</a>
             </div>
 
-            <h1 class="titulo-secundario">Sobre o jogo</h1>
+            <section class="secao-sobre">
 
-            <!-- CRIADORES -->
-            <div class="criadores-box">
+                <div class="pessoas-box duas-colunas">
+                    <article class="pessoa-item">
+                        <img
+                            src="{{ url_for('static', filename='imagens/ana.png') }}"
+                            class="foto-pessoa"
+                            alt="Ana Beatriz"
+                        >
+                        <h3>Ana Beatriz</h3>
+                    </article>
 
-                <!-- CRIADOR 1 -->
-                <div class="criador-item">
-                    <img 
-                        src="{{ url_for('static', filename='imagens/criador1.png') }}" 
-                        class="foto-criador-img"
-                        alt="Criador 1"
-                    >
-
-                    <h2>Ana Beatriz</h2>
+                    <article class="pessoa-item">
+                        <img
+                            src="{{ url_for('static', filename='imagens/marcos.jpeg') }}"
+                            class="foto-pessoa"
+                            alt="Marcos Gabriel"
+                        >
+                        <h3>Marcos Gabriel</h3>
+                    </article>
                 </div>
+            </section>
 
-                <!-- CRIADOR 2 -->
-                <div class="criador-item">
-                    <img 
-                        src="{{ url_for('static', filename='imagens/criador2.png') }}" 
-                        class="foto-criador-img"
-                        alt="Criador 2"
-                    >
+            <section class="secao-sobre">
 
-                    <h2>Marcos Gabriel</h2>
+                <div class="pessoas-box duas-colunas">
+                    <article class="pessoa-item orientador-item">
+                        <img
+                            src="{{ url_for('static', filename='imagens/heber.png') }}"
+                            class="foto-pessoa"
+                            alt="Héber Renato Fadel de Morais"
+                        >
+                        <h3>Héber Renato Fadel de Morais</h3>
+                    </article>
 
+                    <article class="pessoa-item orientador-item">
+                        <img
+                            src="{{ url_for('static', filename='imagens/estevan.png') }}"
+                            class="foto-pessoa"
+                            alt="Estevan Braz Costa"
+                        >
+                        <h3>Estevan Braz Costa</h3>
+                    </article>
                 </div>
+            </section>
 
-            </div>
-
-            <!-- TEXTO -->
-            <div class="texto-sobre-box">
-
+            <section class="texto-sobre-box">
                 <p>
-                    Este quiz numérico está sendo desenvolvido por Ana Beatriz Faustino e Marcos Gabriel Dias
+                    O Quiz Numérico está sendo desenvolvido por Ana Beatriz Faustino Pereira e Marcos Gabriel Dias.
                 </p>
 
                 <p>
-                    A proposta central é um quiz numérico multiplayer, onde os jogadores precisam
-                    responder perguntas utilizando apenas números, competindo entre si com base
-                    na precisão das respostas.
+                    A proposta central é um jogo multiplayer baseado em perguntas e respostas numéricas, no qual os jogadores competem entre si com base na precisão de suas respostas.
                 </p>
 
                 <p>
-                    O sistema ainda está em contrução e sujeito a alterações conforme os testes de usuabilidade.
+                    Este projeto está sendo orientado por Héber Renato Fadel de Morais e com contribuições de Estevan Braz Costa, aos quais registramos nossos mais sinceros agradecimentos pela dedicação, apoio e acompanhamento durante o desenvolvimento da proposta.
                 </p>
 
                 <p>
-                    Este espaço pode ser editado posteriormente para incluir mais detalhes sobre
-                    o desenvolvimento do projeto, desafios enfrentados, tecnologias utilizadas e
-                    contribuições de cada integrante.
-                </p>
-
-            </div>
-
+                    Seus ensinamentos e intruções têm sido fundamentais para o aprimoramento do sistema.
+            </section>
         </div>
-
     </div>
-
 </body>
 </html>
