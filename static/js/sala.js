@@ -153,7 +153,7 @@ function iniciarTimer(dados) {
     turnoAtualControlado = chaveTurno;
 
     const souDaVez = jogadorToken === dados.turno_token;
-    const tempo = Number(dados.tempo_por_turno || 10);
+    const tempo = Number(dados.tempo_por_turno || 15);
 
     barraTempo.style.transition = "none";
     barraTempo.style.width = "100%";
