@@ -21,7 +21,7 @@ salas = {}
 player_sid_map = {}
 
 TOTAL_RODADAS = 7
-TEMPO_POR_TURNO = 10
+TEMPO_POR_TURNO = 15
 
 
 # =========================
