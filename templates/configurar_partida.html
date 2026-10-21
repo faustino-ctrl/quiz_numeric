@@ -18,6 +18,7 @@
             {% endif %}
 
             <form action="{{ url_for('criar_sala') }}" method="POST" class="form-vertical">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <label for="tema">Tema</label>
                 <select name="tema" id="tema" class="select-jogo">
                     <option value="Filosofia">Filosofia</option>
