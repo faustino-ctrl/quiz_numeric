@@ -1,21 +1,91 @@
 import os
 import random
 import uuid
+import secrets
+import hmac
+import re
+from functools import wraps
+from urllib.parse import urlencode
+
+from authlib.integrations.flask_client import OAuth
+from dotenv import load_dotenv
 
 import mysql.connector
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, abort
 from flask_socketio import SocketIO, emit, join_room, leave_room
-from werkzeug.security import generate_password_hash, check_password_hash
 
 from db import buscar_perguntas
 
 
-app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", "sua_chave_secreta_aqui_123")
+load_dotenv()
 
-# Para Gunicorn + Socket.IO, use:
+# Configure estas variáveis no arquivo .env (nunca as publique no GitHub).
+AUTH0_DOMAIN = os.environ.get("AUTH0_DOMAIN", "").strip().removeprefix("https://").rstrip("/")
+AUTH0_CLIENT_ID = os.environ.get("AUTH0_CLIENT_ID", "").strip()
+AUTH0_CLIENT_SECRET = os.environ.get("AUTH0_CLIENT_SECRET", "").strip()
+APP_BASE_URL = os.environ.get("APP_BASE_URL", "http://localhost:5000").rstrip("/")
+SECRET_KEY = os.environ.get("SECRET_KEY", "")
+
+if not all((AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, SECRET_KEY)):
+    raise RuntimeError("Configure AUTH0_DOMAIN, AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET e SECRET_KEY no .env")
+
+app = Flask(__name__)
+
+app.config.update(
+    SECRET_KEY=SECRET_KEY,
+    SESSION_COOKIE_NAME="quiz_numerico_session",
+    SESSION_COOKIE_HTTPONLY=True,
+    SESSION_COOKIE_SAMESITE="Lax",
+    SESSION_COOKIE_SECURE=APP_BASE_URL.startswith("https://"),
+    SESSION_COOKIE_DOMAIN=None,
+    SESSION_COOKIE_PATH="/",
+)
+
+oauth = OAuth(app)
+oauth.register(
+    "auth0",
+    client_id=AUTH0_CLIENT_ID,
+    client_secret=AUTH0_CLIENT_SECRET,
+    server_metadata_url=f"https://{AUTH0_DOMAIN}/.well-known/openid-configuration",
+    client_kwargs={"scope": "openid profile email"},
+)
+
+# Para Gunicorn + Socket.IO no Google Cloud, use:
 # gunicorn --worker-class eventlet -w 1 app:app
-socketio = SocketIO(app, async_mode=None, cors_allowed_origins="*")
+# (Ou defina SOCKETIO_ASYNC_MODE=threading localmente se desejar forçar threading)
+socketio = SocketIO(app, async_mode=os.environ.get("SOCKETIO_ASYNC_MODE") or None)
+
+
+@app.context_processor
+def injetar_csrf():
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_urlsafe(32)
+    return {"csrf_token": session["csrf_token"]}
+
+
+def validar_csrf():
+    recebido = request.form.get("csrf_token", "")
+    esperado = session.get("csrf_token", "")
+    if not esperado or not hmac.compare_digest(recebido, esperado):
+        abort(400, description="Token CSRF inválido. Atualize a página e tente novamente.")
+
+
+def exigir_login(func):
+    @wraps(func)
+    def protegido(*args, **kwargs):
+        if not session.get("auth0_sub"):
+            return redirect(url_for("login"))
+        if not session.get("usuario_id") or not session.get("username"):
+            return redirect(url_for("configurar_usuario"))
+        return func(*args, **kwargs)
+    return protegido
+
+
+def jogador_autorizado(codigo, token):
+    if codigo not in salas or not token or not session.get("auth0_sub"):
+        return False
+    dados = salas[codigo]["jogadores"].get(token)
+    return bool(dados and dados.get("auth0_sub") == session["auth0_sub"])
 
 salas = {}
 player_sid_map = {}
@@ -359,92 +429,220 @@ def finalizar_ou_continuar(codigo):
     emitir_estado_sala(codigo)
 
 
-def buscar_usuario_por_username(username):
+def buscar_perfil_por_sub(auth0_sub):
     conexao = conectar_banco()
     cursor = conexao.cursor(dictionary=True)
-
-    sql = "SELECT * FROM usuarios WHERE BINARY username = %s"
-    cursor.execute(sql, (username,))
-    usuario = cursor.fetchone()
-
-    cursor.close()
-    conexao.close()
-    return usuario
+    try:
+        cursor.execute("SELECT id, username FROM perfis_auth0 WHERE auth0_sub = %s", (auth0_sub,))
+        return cursor.fetchone()
+    finally:
+        cursor.close()
+        conexao.close()
 
 
-def buscar_usuario_por_email(email):
+def buscar_email_usuario_legado(username):
+    """Reserva nomes de usuários antigos; apenas o dono do e-mail verificado pode reutilizá-los."""
     conexao = conectar_banco()
     cursor = conexao.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT email FROM usuarios WHERE BINARY username = %s", (username,))
+        usuario = cursor.fetchone()
+        return usuario["email"] if usuario else None
+    finally:
+        cursor.close()
+        conexao.close()
 
-    sql = "SELECT * FROM usuarios WHERE email = %s"
-    cursor.execute(sql, (email,))
-    usuario = cursor.fetchone()
 
-    cursor.close()
-    conexao.close()
-    return usuario
-
-
-def criar_usuario(username, email, senha):
+def criar_perfil(auth0_sub, username, email):
     conexao = conectar_banco()
     cursor = conexao.cursor()
-
-    senha_hash = generate_password_hash(senha)
-
-    sql = """
-        INSERT INTO usuarios (username, email, senha_hash)
-        VALUES (%s, %s, %s)
-    """
-    cursor.execute(sql, (username, email, senha_hash))
-    conexao.commit()
-
-    cursor.close()
-    conexao.close()
-
-
-def atualizar_senha_por_email(email, nova_senha):
-    conexao = conectar_banco()
-    cursor = conexao.cursor()
-
-    nova_hash = generate_password_hash(nova_senha)
-
-    sql = "UPDATE usuarios SET senha_hash = %s WHERE email = %s"
-    cursor.execute(sql, (nova_hash, email))
-    conexao.commit()
-
-    cursor.close()
-    conexao.close()
+    try:
+        cursor.execute(
+            "INSERT INTO perfis_auth0 (auth0_sub, username, email) VALUES (%s, %s, %s)",
+            (auth0_sub, username, email),
+        )
+        conexao.commit()
+    finally:
+        cursor.close()
+        conexao.close()
 
 
 # =========================
-# ROTAS HTTP
+# AUTENTICAÇÃO VIA AUTH0
 # =========================
 @app.route("/")
 def index():
-    if "usuario_id" in session:
-        return render_template("auth_inicio.html", usuario_logado=session["username"])
-    return render_template("auth_inicio.html", usuario_logado=None)
+    return render_template("auth_inicio.html", usuario_logado=session.get("username"))
 
 
-@app.route("/lobby")
-def lobby():
-    if "usuario_id" not in session:
+
+def limpar_estados_auth0():
+    # Remove estados pendentes de tentativas anteriores.
+    # Um novo login iniciado nesta sessão invalida os anteriores.
+    for chave in list(session.keys()):
+        if chave.startswith("_state_auth0_"):
+            session.pop(chave, None)
+
+
+@app.route("/login")
+def login():
+    limpar_estados_auth0()
+
+    callback_url = url_for("callback", _external=True)
+
+    print("INICIO LOGIN:", request.host_url, flush=True)
+    print("CALLBACK URL:", callback_url, flush=True)
+
+    resposta = oauth.auth0.authorize_redirect(callback_url)
+
+    print(
+        "ESTADOS CRIADOS:",
+        sum(
+            chave.startswith("_state_auth0_")
+            for chave in session.keys()
+        ),
+        flush=True
+    )
+
+    return resposta
+
+
+@app.route("/cadastro")
+def cadastro():
+    limpar_estados_auth0()
+
+    callback_url = url_for("callback", _external=True)
+
+    return oauth.auth0.authorize_redirect(
+        callback_url,
+        screen_hint="signup",
+        prompt="login"
+    )
+
+
+@app.route("/callback")
+def callback():
+    print("Host:", request.host)
+    print("Cookie de sessão recebido:",
+      "quiz_numerico_session" in request.cookies)
+    print("Estados Auth0 na sessão:",
+      len([k for k in session.keys()
+           if k.startswith("_state_auth0_")]))
+    try:
+        token = oauth.auth0.authorize_access_token()
+        # userinfo vem de um ID token validado pela biblioteca Authlib.
+        usuario_auth0 = token.get("userinfo") or {}
+        sub = usuario_auth0.get("sub", "")
+        if not sub:
+            raise ValueError("Resposta de autenticação sem identificador do usuário")
+    except Exception as erro:
+        import traceback
+
+        print("\n========== ERRO AUTH0 ==========", flush=True)
+        print("Tipo:", type(erro).__name__, flush=True)
+        print("Mensagem:", str(erro), flush=True)
+        traceback.print_exc()
+        print("===============================\n", flush=True)
+
+        return "Falha na autenticação. Consulte o terminal.", 400
+    # Não persistir access tokens, ID tokens ou senhas no cookie de sessão.
+    session.clear()
+    session["auth0_sub"] = sub
+    session["auth0_email"] = (usuario_auth0.get("email") or "")[:255]
+    session["auth0_email_verified"] = usuario_auth0.get("email_verified") is True
+
+    perfil = buscar_perfil_por_sub(sub)
+    if perfil:
+        session["usuario_id"] = perfil["id"]
+        session["username"] = perfil["username"]
+        return redirect(url_for("lobby"))
+    return redirect(url_for("configurar_usuario"))
+
+
+@app.route("/configurar_usuario", methods=["GET", "POST"])
+def configurar_usuario():
+    if not session.get("auth0_sub"):
         return redirect(url_for("login"))
+    if session.get("usuario_id"):
+        return redirect(url_for("lobby"))
+
+    if request.method == "POST":
+        validar_csrf()
+        username = request.form.get("username", "").strip()
+        if not re.fullmatch(r"[A-Za-z0-9_]{5,12}", username, flags=re.ASCII):
+            return render_template(
+                "configurar_usuario.html",
+                erro="Use de 5 a 12 caracteres: letras, números ou sublinhado (_).",
+            )
+        email_antigo = buscar_email_usuario_legado(username)
+        if email_antigo and not (
+            session.get("auth0_email_verified")
+            and email_antigo.casefold() == (session.get("auth0_email") or "").casefold()
+        ):
+            return render_template(
+                "configurar_usuario.html",
+                erro="Nome reservado por uma conta antiga. Cadastre-se no Auth0 com o e-mail antigo e verifique-o para recuperá-lo.",
+            )
+        try:
+            criar_perfil(session["auth0_sub"], username, session.get("auth0_email"))
+        except mysql.connector.IntegrityError:
+            # Pode ser usuário duplicado ou um POST repetido após a criação.
+            perfil = buscar_perfil_por_sub(session["auth0_sub"])
+            if perfil:
+                session["usuario_id"] = perfil["id"]
+                session["username"] = perfil["username"]
+                return redirect(url_for("lobby"))
+            return render_template("configurar_usuario.html", erro="Nome de usuário já está em uso.")
+        perfil = buscar_perfil_por_sub(session["auth0_sub"])
+        session["usuario_id"] = perfil["id"]
+        session["username"] = perfil["username"]
+        return redirect(url_for("lobby"))
+    return render_template("configurar_usuario.html")
+
+
+@app.route("/logout", methods=["POST"])
+def logout():
+    validar_csrf()
+    session.clear()
+    params = urlencode({"client_id": AUTH0_CLIENT_ID, "returnTo": APP_BASE_URL + "/"})
+    return redirect(f"https://{AUTH0_DOMAIN}/v2/logout?{params}")
+
+
+@app.route("/trocar_conta", methods=["POST"])
+def trocar_conta():
+    return logout()
+
+
+@app.route("/recuperar")
+def recuperar():
+    # O formulário seguro 'Esqueci minha senha' está na tela Auth0.
+    return redirect(url_for("login"))
+
+
+@app.route("/sobre")
+def sobre():
+    return render_template("sobre.html")
+
+
+# =========================
+# ROTAS HTTP DO JOGO
+# =========================
+@app.route("/lobby")
+@exigir_login
+def lobby():
     return render_template("lobby.html", nome=session["username"])
 
 
 @app.route("/configurar_partida")
+@exigir_login
 def configurar_partida():
-    if "usuario_id" not in session:
-        return redirect(url_for("login"))
     return render_template("configurar_partida.html", nome=session["username"])
 
 
 @app.route("/criar_sala", methods=["POST"])
+@exigir_login
 def criar_sala():
-    if "usuario_id" not in session:
-        return redirect(url_for("login"))
-
+    validar_csrf()
     nome = session["username"]
     tema = request.form.get("tema", "aleatorio").strip()
     dificuldade = request.form.get("dificuldade", "aleatorio").strip()
@@ -467,6 +665,7 @@ def criar_sala():
         "jogadores": {
             token: {
                 "nome": nome,
+                "auth0_sub": session["auth0_sub"],
                 "pontos": 0,
                 "ordem_chegada": 1
             }
@@ -488,178 +687,53 @@ def criar_sala():
         "aviso_rodada": "",
         "resposta_revelada": None
     }
-
     return render_template("sala.html", nome=nome, codigo=codigo, token=token, sala=salas[codigo])
 
 
 @app.route("/pagina_entrar_sala")
+@exigir_login
 def pagina_entrar_sala():
-    if "usuario_id" not in session:
-        return redirect(url_for("login"))
     return render_template("entrar_sala.html", nome=session["username"])
 
 
 @app.route("/entrar_sala", methods=["POST"])
+@exigir_login
 def entrar_sala():
-    if "usuario_id" not in session:
-        return redirect(url_for("login"))
-
+    validar_csrf()
     nome = session["username"]
     codigo = request.form.get("codigo", "").strip()
-
     if codigo == "":
         return render_template("entrar_sala.html", nome=nome, erro="Digite o código da sala.")
-
     if codigo not in salas:
         return render_template("entrar_sala.html", nome=nome, erro="Sala não encontrada.")
 
     sala = salas[codigo]
+    for token_existente, dados in sala["jogadores"].items():
+        if dados.get("auth0_sub") == session["auth0_sub"]:
+            return render_template("sala.html", nome=nome, codigo=codigo, token=token_existente, sala=sala)
 
     if sala["em_jogo"]:
         return render_template("entrar_sala.html", nome=nome, erro="A partida já começou nesta sala.")
 
-    for token_existente, dados in sala["jogadores"].items():
-        if dados["nome"] == nome:
-            return render_template("sala.html", nome=nome, codigo=codigo, token=token_existente, sala=sala)
-
     token = gerar_token_jogador()
-    ordem_chegada = len(sala["jogadores"]) + 1
-
+    ordem_chegada = max((d["ordem_chegada"] for d in sala["jogadores"].values()), default=0) + 1
     sala["jogadores"][token] = {
         "nome": nome,
+        "auth0_sub": session["auth0_sub"],
         "pontos": 0,
         "ordem_chegada": ordem_chegada
     }
-
     sala["mensagens"].append(f"{nome} entrou na sala.")
     return render_template("sala.html", nome=nome, codigo=codigo, token=token, sala=sala)
-
-
-@app.route("/cadastro")
-def cadastro():
-    return render_template("cadastro.html")
-
-
-@app.route("/cadastrar", methods=["POST"])
-def cadastrar():
-    username = request.form.get("username", "").strip()
-    email = request.form.get("email", "").strip()
-    senha = request.form.get("senha", "").strip()
-
-    if username == "" or email == "" or senha == "":
-        return render_template("cadastro.html", erro="Preencha todos os campos.")
-
-    if len(username) > 12:
-        return render_template("cadastro.html", erro="O nome de usuário pode ter no máximo 12 caracteres.")
-
-    if len(senha) < 6:
-        return render_template("cadastro.html", erro="A senha deve ter pelo menos 6 caracteres.")
-
-    usuario_existente = buscar_usuario_por_username(username)
-    if usuario_existente:
-        return render_template("cadastro.html", erro="Esse nome de usuário já está em uso.")
-
-    email_existente = buscar_usuario_por_email(email)
-    if email_existente:
-        return render_template("cadastro.html", erro="Esse email já está cadastrado.")
-
-    criar_usuario(username, email, senha)
-    return render_template("login.html", sucesso="Cadastro realizado com sucesso. Faça login.")
-
-
-@app.route("/login")
-def login():
-    return render_template("login.html")
-
-
-@app.route("/logar", methods=["POST"])
-def logar():
-    username = request.form.get("username", "").strip()
-    senha = request.form.get("senha", "").strip()
-
-    if username == "" or senha == "":
-        return render_template("login.html", erro="Preencha usuário e senha.")
-
-    usuario = buscar_usuario_por_username(username)
-
-    if not usuario:
-        return render_template("login.html", erro="Usuário não encontrado.")
-
-    if not check_password_hash(usuario["senha_hash"], senha):
-        return render_template("login.html", erro="Senha incorreta.")
-
-    session.clear()
-    session["usuario_id"] = usuario["id"]
-    session["username"] = usuario["username"]
-
-    return redirect(url_for("lobby"))
-
-
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect(url_for("index"))
-
-
-@app.route("/recuperar")
-def recuperar():
-    return render_template("recuperar.html")
-
-
-@app.route("/buscar_conta", methods=["POST"])
-def buscar_conta():
-    email = request.form.get("email", "").strip()
-
-    if email == "":
-        return render_template("recuperar.html", erro="Digite seu email.")
-
-    usuario = buscar_usuario_por_email(email)
-
-    if not usuario:
-        return render_template("recuperar.html", erro="Nenhuma conta foi encontrada com esse email.")
-
-    return render_template("redefinir_senha.html", email=email, username=usuario["username"])
-
-
-@app.route("/redefinir_senha", methods=["POST"])
-def redefinir_senha():
-    email = request.form.get("email", "").strip()
-    nova_senha = request.form.get("nova_senha", "").strip()
-
-    if email == "" or nova_senha == "":
-        return render_template("recuperar.html", erro="Preencha os campos corretamente.")
-
-    if len(nova_senha) < 6:
-        usuario = buscar_usuario_por_email(email)
-        username = usuario["username"] if usuario else ""
-        return render_template(
-            "redefinir_senha.html",
-            email=email,
-            username=username,
-            erro="A nova senha deve ter pelo menos 6 caracteres."
-        )
-
-    atualizar_senha_por_email(email, nova_senha)
-    return render_template("login.html", sucesso="Senha redefinida com sucesso.")
-
-
-@app.route("/trocar_conta")
-def trocar_conta():
-    session.clear()
-    return redirect(url_for("login"))
-
-
-@app.route("/sobre")
-def sobre():
-    return render_template("sobre.html")
 
 
 # =========================
 # SOCKET.IO
 # =========================
 @socketio.on("connect")
-def ao_conectar():
-    pass
+def ao_conectar(auth=None):
+    if not session.get("auth0_sub") or not session.get("usuario_id"):
+        return False
 
 
 @socketio.on("entrar_socket_sala")
@@ -670,7 +744,7 @@ def entrar_socket_sala(dados):
     if codigo not in salas:
         return
 
-    if token not in salas[codigo]["jogadores"]:
+    if not jogador_autorizado(codigo, token):
         return
 
     join_room(codigo)
@@ -687,6 +761,9 @@ def iniciar_partida_socket(dados):
         return
 
     sala = salas[codigo]
+
+    if not jogador_autorizado(codigo, token):
+        return
 
     if token != sala["criador_token"]:
         emit("erro_jogo", {"mensagem": "Somente a criadora pode iniciar a partida."}, room=request.sid)
@@ -729,7 +806,7 @@ def enviar_resposta(dados):
 
     sala = salas[codigo]
 
-    if not sala["em_jogo"] or token not in sala["jogadores"]:
+    if not sala["em_jogo"] or not jogador_autorizado(codigo, token):
         return
 
     if resposta_texto == "":
@@ -810,7 +887,7 @@ def tempo_esgotado(dados):
 
     sala = salas[codigo]
 
-    if not sala["em_jogo"] or token not in sala["jogadores"]:
+    if not sala["em_jogo"] or not jogador_autorizado(codigo, token):
         return
 
     turno_token = obter_turno_token(sala)
@@ -840,6 +917,8 @@ def voltar_para_espera(dados):
         return
 
     sala = salas[codigo]
+    if not jogador_autorizado(codigo, sala["criador_token"]):
+        return
     sala["em_jogo"] = False
     sala["rodada_atual"] = 0
     sala["fase"] = "espera"
@@ -867,7 +946,7 @@ def sair_da_sala_socket(dados):
 
     sala = salas[codigo]
 
-    if token not in sala["jogadores"]:
+    if not jogador_autorizado(codigo, token):
         return
 
     nome = sala["jogadores"][token]["nome"]
@@ -909,4 +988,4 @@ def sair_da_sala_socket(dados):
 
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=os.environ.get("FLASK_DEBUG", "0") == "1")

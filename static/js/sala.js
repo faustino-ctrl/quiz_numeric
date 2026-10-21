@@ -212,6 +212,7 @@ function atualizarTela(dados) {
         if (dados.mostrar_ranking_final) {
             rankingFinal.style.display = "block";
             atualizarRanking(dados.ranking);
+            botaoVoltarEspera.style.display = souCriador ? "inline-block" : "none";
             botaoIniciar.style.display = "none";
         } else {
             rankingFinal.style.display = "none";

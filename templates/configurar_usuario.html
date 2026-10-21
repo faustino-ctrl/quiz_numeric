@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Escolher nome de jogador — Quiz Numérico</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="tela">
+        <div class="card">
+            <p class="texto-topo">PRIMEIRO ACESSO</p>
+            <h1 class="titulo-secundario">Escolha seu nome no jogo</h1>
+            {% if erro %}<p class="mensagem erro">{{ erro }}</p>{% endif %}
+            <form action="{{ url_for('configurar_usuario') }}" method="POST" class="form-vertical">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <label for="username">Nome do jogador (5 a 12 caracteres)</label>
+                <input type="text" id="username" name="username" class="input"
+                       minlength="5" maxlength="12" pattern="[A-Za-z0-9_]{5,12}"
+                       autocomplete="off" required>
+                <p class="texto-aviso">Permitidos: letras, números e _. Maiúsculas e minúsculas são diferenciadas.</p>
+                <button type="submit" class="botao">Continuar para o jogo</button>
+            </form>
+            <form action="{{ url_for('logout') }}" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button type="submit" class="botao">Cancelar e sair</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

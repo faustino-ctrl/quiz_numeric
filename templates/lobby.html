@@ -32,9 +32,10 @@
                     </button>
                 </form>
 
-                <a href="{{ url_for('logout') }}" class="botao-link confirmar-logout">
-                    Sair da conta
-                </a>
+                <form action="{{ url_for('logout') }}" method="POST">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                    <button type="submit" class="botao confirmar-logout">Sair da conta</button>
+                </form>
 
             </div>
 

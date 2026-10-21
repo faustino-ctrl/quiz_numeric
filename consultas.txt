@@ -9,6 +9,30 @@ CREATE TABLE perguntas (
     resposta_correta INT NOT NULL
 );
 
+USE quiz_guias;
+
+CREATE TABLE IF NOT EXISTS usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL UNIQUE,
+    email VARCHAR(120) NOT NULL,
+    senha_hash VARCHAR(255) NOT NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_username (username),
+    UNIQUE KEY unique_email (email)
+);
+
+USE quiz_guias;
+
+CREATE TABLE IF NOT EXISTS perfis_auth0 (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    auth0_sub VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+    username VARCHAR(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+    email VARCHAR(255) NULL,
+    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY uq_perfis_auth0_sub (auth0_sub),
+    UNIQUE KEY uq_perfis_auth0_username (username)
+);
+
 INSERT INTO perguntas (tema, dificuldade, pergunta, resposta_correta) VALUES
 ('Filosofia','facil','Quantos filósofos formam o trio Sócrates, Platão e Aristóteles?',3),
 ('Filosofia','facil','Em quantas partes Platão divide a alma na República?',3),
@@ -213,14 +237,3 @@ INSERT INTO perguntas (tema, dificuldade, pergunta, resposta_correta) VALUES
 ('Historia','dificil','Quantos anos durou o governo de Dom Pedro II se considerarmos o Segundo Reinado?',49),
 ('Historia','dificil','Quantos anos durou aproximadamente a Guerra dos Cem Anos?',116);
 
-USE quiz_guias;
-
-CREATE TABLE IF NOT EXISTS usuarios (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(7) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL UNIQUE,
-    email VARCHAR(120) NOT NULL,
-    senha_hash VARCHAR(255) NOT NULL,
-    criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE KEY unique_username (username),
-    UNIQUE KEY unique_email (email)
-);

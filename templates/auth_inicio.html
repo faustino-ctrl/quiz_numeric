@@ -21,8 +21,14 @@
 
                 <div class="grupo-botoes">
                     <a href="{{ url_for('lobby') }}" class="botao-link">Continuar</a>
-                    <a href="{{ url_for('trocar_conta') }}" class="botao-link">Entrar em outra conta</a>
-                    <a href="{{ url_for('logout') }}" class="botao-link confirmar-logout">Sair</a>
+                    <form action="{{ url_for('trocar_conta') }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <button type="submit" class="botao">Entrar em outra conta</button>
+                    </form>
+                    <form action="{{ url_for('logout') }}" method="POST">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                        <button type="submit" class="botao confirmar-logout">Sair</button>
+                    </form>
                 </div>
             {% else %}
 
